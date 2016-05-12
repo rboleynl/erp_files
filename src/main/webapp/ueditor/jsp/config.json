@@ -22,7 +22,7 @@
     /* "imageUrlPrefix": "/erp_files/", *//* 图片访问路径前缀 */
     "imageUrlPrefix": "",
     /*（注意）建议生产环境时修改所有格式，如：/files  在files前面添加'斜杠'*/
-    "imagePathFormat": "files{erp_path}/image/{yyyy}{mm}{dd}/{time}{rand:6}", /* 上传保存路径,可以自定义保存路径和文件名格式 */
+    "imagePathFormat": "files{erp_path}/image/{yyyy}{mm}{dd}/{filename}_{time}", /* 上传保存路径,可以自定义保存路径和文件名格式 */
                                 /* {filename} 会替换成原文件名,配置这项需要注意中文乱码问题 */
                                 /* {rand:6} 会替换成随机数,后面的数字是随机数的位数 */
                                 /* {time} 会替换成时间戳 */
@@ -72,7 +72,7 @@
     /* 上传文件配置 */
     "fileActionName": "uploadfile", /* controller里,执行上传视频的action名称 */
     "fileFieldName": "upfile", /* 提交的文件表单名称 */
-    "filePathFormat": "files{erp_path}/file/{yyyy}{mm}{dd}/{time}{rand:6}", /* 上传保存路径,可以自定义保存路径和文件名格式 */
+    "filePathFormat": "files{erp_path}/file/{yyyy}{mm}{dd}/{filename}_{time}", /* 上传保存路径,可以自定义保存路径和文件名格式 */
     "fileUrlPrefix": "", /* 文件访问路径前缀 */
     "fileMaxSize": 51200000, /* 上传大小限制，单位B，默认50MB */
     "fileAllowFiles": [
