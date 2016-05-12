@@ -21,8 +21,14 @@ public class Uploader {
 		State state = null;
 
 		if ("true".equals(this.conf.get("isBase64"))) {
-			state = Base64Uploader.save(this.request.getParameter(filedName),
-					this.conf);
+			//替换为七牛存储方式_renlei
+			if (this.conf.get("qiniu.flag") != null && Strings.equals("true", (String)this.conf.get("qiniu.flag"))) {
+				state = Base64UploaderByQiniu.save(this.request.getParameter(filedName),
+						this.conf);
+			}else{
+				state = Base64Uploader.save(this.request.getParameter(filedName),
+						this.conf);
+			}
 		} else {
 			//替换为七牛存储方式_renlei
 			if (this.conf.get("qiniu.flag") != null && Strings.equals("true", (String)this.conf.get("qiniu.flag"))) {
