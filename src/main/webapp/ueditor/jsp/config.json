@@ -4,7 +4,7 @@
 	/* qiniu 配置 */
 	"qiniu.accessKey" : "NZrTFjztBSRINUzLMYGRGtuxYBzbE8MeLTXoRgyy",
 	"qiniu.secretKey" : "X9r5o7XThUKiXnlmstGIOAGiK-PiD5E5HRmHeJ__",
-	"qiniu.bucket.mappings" : "{'tontisa-xqerp':{'dn':'http://o6y7grm41.bkt.clouddn.com','isPrivate':'false'},'pro-tontisa-xqerp':{'dn':'http://7xtwdr.com2.z0.glb.qiniucdn.com','isPrivate':'false'}}",
+	"qiniu.bucket.mappings" : "{'tontisa-xqerp':{'dn':'http://cdnfile.op110.com.cn','isPrivate':'false'},'tontisa-file':{'dn':'http://o6yn0zkni.bkt.clouddn.com','isPrivate':'false'}}",
 	"image.bucket" : "tontisa-xqerp",
 	/* 设置代理 */
 	"http.proxy.host" : "",
