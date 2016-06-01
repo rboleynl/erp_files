@@ -43,11 +43,11 @@
 			<artifactId>json</artifactId>
 			<version>20160212</version>
 		</dependency>
-		<!-- <dependency>
+		<dependency>
 			<groupId>com.tontisa.common</groupId>
 			<artifactId>tontisa-commons-exception-web</artifactId>
 			<version>${tontisa.commons.exception.web.version}</version>
-		</dependency> -->
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>erp_files</finalName>

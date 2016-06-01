@@ -26,8 +26,10 @@ public final class ConfigManager {
 	private final String originalPath;
 	private final String contextPath;
 	private static final String configFileName = "config.json";
+	private static final String qiniuConfigFileName = "qiniu_config.json";
 	private String parentPath = null;
 	private JSONObject jsonConfig = null;
+	private JSONObject qiniuJsonConfig = null;
 	// 涂鸦上传filename定义
 	private final static String SCRAWL_FILE_NAME = "scrawl";
 	// 远程图片抓取filename定义
@@ -85,17 +87,18 @@ public final class ConfigManager {
 		
 		Map<String, Object> conf = new HashMap<String, Object>();
 		
-		conf.put("qiniu.flag", this.jsonConfig.getString("qiniu.flag"));
 		//七牛配置设置begin_renlei
-		conf.put("qiniu.accessKey", this.jsonConfig.getString("qiniu.accessKey"));
-		conf.put("qiniu.secretKey", this.jsonConfig.getString("qiniu.secretKey"));
-		conf.put("qiniu.bucket.mappings", this.jsonConfig.getString("qiniu.bucket.mappings"));
-		conf.put("image.bucket", this.jsonConfig.getString("image.bucket"));
-		//代理配置
-		conf.put("http.proxy.host", this.jsonConfig.getString("http.proxy.host"));
-		conf.put("http.proxy.port", this.jsonConfig.getString("http.proxy.port"));
+		if (qiniuJsonConfig != null) {
+			conf.put("qiniu.flag", this.qiniuJsonConfig.getString("qiniu.flag"));
+			conf.put("qiniu.accessKey", this.qiniuJsonConfig.getString("qiniu.accessKey"));
+			conf.put("qiniu.secretKey", this.qiniuJsonConfig.getString("qiniu.secretKey"));
+			conf.put("qiniu.bucket.mappings", this.qiniuJsonConfig.getString("qiniu.bucket.mappings"));
+			conf.put("image.bucket", this.qiniuJsonConfig.getString("image.bucket"));
+			//代理配置
+			conf.put("http.proxy.host", this.qiniuJsonConfig.getString("http.proxy.host"));
+			conf.put("http.proxy.port", this.qiniuJsonConfig.getString("http.proxy.port"));
+		}
 		//七牛配置设置end_renlei
-		
 		
 		String savePath = null;
 		
@@ -181,10 +184,23 @@ public final class ConfigManager {
 			this.jsonConfig = null;
 		}
 		
+		//加载七牛配置
+		String qiniuConfigContent = this.readFile( this.getQiniuConfigPath() );
+		
+		try{
+			JSONObject qiniuJsonConfig = new JSONObject( qiniuConfigContent );
+			this.qiniuJsonConfig = qiniuJsonConfig;
+		} catch ( Exception e ) {
+			this.qiniuJsonConfig = null;
+		}
 	}
 	
 	private String getConfigPath () {
 		return this.parentPath + File.separator + ConfigManager.configFileName;
+	}
+	
+	private String getQiniuConfigPath () {
+		return this.parentPath + File.separator + ConfigManager.qiniuConfigFileName;
 	}
 
 	private String[] getArray ( String key ) {

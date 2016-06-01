@@ -1,15 +1,5 @@
 /* 前后端通信相关的配置,注释只允许使用多行方式 */
 {
-	"qiniu.flag" : "true", /* 七牛存储开关，为true采用七牛存储*/
-	/* qiniu 配置 */
-	"qiniu.accessKey" : "NZrTFjztBSRINUzLMYGRGtuxYBzbE8MeLTXoRgyy",
-	"qiniu.secretKey" : "X9r5o7XThUKiXnlmstGIOAGiK-PiD5E5HRmHeJ__",
-	"qiniu.bucket.mappings" : "{'tontisa-xqerp':{'dn':'http://cdnfile.op110.com.cn','isPrivate':'false'},'tontisa-file':{'dn':'http://o6yn0zkni.bkt.clouddn.com','isPrivate':'false'}}",
-	"image.bucket" : "tontisa-xqerp",
-	/* 设置代理 */
-	"http.proxy.host" : "",
-	"http.proxy.port" : "",
-
     /* 上传图片配置项 */
     "imageActionName": "uploadimage", /* 执行上传图片的action名称 */
     "imageFieldName": "upfile", /* 提交的图片表单名称 */
