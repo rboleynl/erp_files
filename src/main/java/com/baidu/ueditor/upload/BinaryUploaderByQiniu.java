@@ -94,7 +94,9 @@ public class BinaryUploaderByQiniu {
 			if (storageState.isSuccess()) {
 				//返回七牛完整路径--此种方式可以兼容以前直接上传在本地的图片访问方式，唯一的缺点就是七牛空间域名固定，不可修改
 				//storageState.putInfo("url", bucketObj.getFileUrl(saveFileName));
-				storageState.putInfo("url", qiniuCloudStoreUtil.getFileURL(bucket, savePath));
+				//处理文件名特殊字符~!@#$%^&(){}[]【】';,.-=+_。，；：“‘、空格-->~%21@%23$%25%5E&%28){}%5B]';,.-=+_。，；：“‘、_1468218495036.jpg
+				String url = qiniuCloudStoreUtil.getFileURL(bucket, savePath).replace("%", "%25").replace(" ", "%20").replace("^", "%5E").replace("!", "%21").replace("#", "%23");
+				storageState.putInfo("url", url);
 				storageState.putInfo("type", suffix);
 				storageState.putInfo("original", originFileName + suffix);
 			}
@@ -110,5 +112,10 @@ public class BinaryUploaderByQiniu {
 		List<String> list = Arrays.asList(allowTypes);
 
 		return list.contains(type);
+	}
+	
+	public static void main(String[] args) {
+		String t = "QQ图片20160520112312    的_1465004368252";
+		System.out.println(t.replace(" ", "%20"));
 	}
 }
