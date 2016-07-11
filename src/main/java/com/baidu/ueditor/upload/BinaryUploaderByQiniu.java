@@ -79,7 +79,8 @@ public class BinaryUploaderByQiniu {
 				return new BaseState(false, AppInfo.NOT_ALLOW_FILE_TYPE);
 			}
 			//maolujun
-			savePath = PathFormat.parse(savePath, originFileName, conf);
+			//wb这里会将&符号转译成&amp;-->过滤&字符
+			savePath = PathFormat.parse(savePath, originFileName, conf).replace("&", "a");
 			
 			//七牛存储
 			String bucket = Strings.defaultString((String) conf.get("image.bucket"));
