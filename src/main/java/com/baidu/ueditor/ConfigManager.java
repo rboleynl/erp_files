@@ -93,6 +93,7 @@ public final class ConfigManager {
 			conf.put("qiniu.accessKey", this.qiniuJsonConfig.getString("qiniu.accessKey"));
 			conf.put("qiniu.secretKey", this.qiniuJsonConfig.getString("qiniu.secretKey"));
 			conf.put("qiniu.bucket.mappings", this.qiniuJsonConfig.getString("qiniu.bucket.mappings"));
+			conf.put("qiniu.fsizeLimit", this.qiniuJsonConfig.getString("qiniu.fsizeLimit"));
 			conf.put("image.bucket", this.qiniuJsonConfig.getString("image.bucket"));
 			//代理配置
 			conf.put("http.proxy.host", this.qiniuJsonConfig.getString("http.proxy.host"));
@@ -220,21 +221,33 @@ public final class ConfigManager {
 		
 		StringBuilder builder = new StringBuilder();
 		
+		InputStreamReader reader = null;
+		BufferedReader bfReader = null;
 		try {
 			
-			InputStreamReader reader = new InputStreamReader( new FileInputStream( path ), "UTF-8" );
-			BufferedReader bfReader = new BufferedReader( reader );
+			reader = new InputStreamReader( new FileInputStream( path ), "UTF-8" );
+			bfReader = new BufferedReader( reader );
 			
 			String tmpContent = null;
 			
 			while ( ( tmpContent = bfReader.readLine() ) != null ) {
 				builder.append( tmpContent );
 			}
-			
-			bfReader.close();
-			
 		} catch ( UnsupportedEncodingException e ) {
 			// 忽略
+		} finally {
+			if (bfReader != null) {
+				try {
+					bfReader.close();
+				} catch (Exception e) {
+				}
+			}
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (Exception e) {
+				}
+			}
 		}
 		
 		return this.filter( builder.toString() );

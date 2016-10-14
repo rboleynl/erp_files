@@ -17,6 +17,7 @@ import com.baidu.ueditor.define.AppInfo;
 import com.baidu.ueditor.define.BaseState;
 import com.baidu.ueditor.define.FileType;
 import com.baidu.ueditor.define.State;
+import com.qiniu.util.StringMap;
 import com.tontisa.common.lang.Strings;
 import com.tontisa.commons.cloudstore.UploadStatus;
 import com.tontisa.commons.cloudstore.qiniu.QiniuCloudStorerUtil;
@@ -85,7 +86,19 @@ public class BinaryUploaderByQiniu {
 			//七牛存储
 			String bucket = Strings.defaultString((String) conf.get("image.bucket"));
 			QiniuCloudStorerUtil qiniuCloudStoreUtil = QiniuCloudStorerUtil.getInstance(conf);
-			UploadStatus uploadStatus = qiniuCloudStoreUtil.upload(bucket, savePath, fileItem.get());
+			//UploadStatus uploadStatus = qiniuCloudStoreUtil.upload(bucket, savePath, fileItem.get());
+			StringMap map = null;
+			if (conf.get("qiniu.fsizeLimit") != null) {
+				map = new StringMap();
+				map.put("fsizeLimit", Long.parseLong((String) conf.get("qiniu.fsizeLimit")));
+			}
+			UploadStatus uploadStatus = null;
+			if (map != null) {
+				uploadStatus = qiniuCloudStoreUtil.upload(bucket, savePath, fileItem.get(), map);
+			}else{
+				uploadStatus = qiniuCloudStoreUtil.upload(bucket, savePath, fileItem.get());
+			}
+			
 			if (UploadStatus.FAIL == uploadStatus) {
 				return new BaseState(false, AppInfo.NOT_ALLOW_FILE_TYPE);
 			}
