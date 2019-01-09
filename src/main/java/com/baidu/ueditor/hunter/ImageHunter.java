@@ -1,5 +1,7 @@
 package com.baidu.ueditor.hunter;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
@@ -14,11 +16,14 @@ import com.baidu.ueditor.define.BaseState;
 import com.baidu.ueditor.define.MIMEType;
 import com.baidu.ueditor.define.MultiState;
 import com.baidu.ueditor.define.State;
-import com.baidu.ueditor.upload.StorageManager;
+import com.tontisa.common.lang.Strings;
+import com.tontisa.commons.cloudstore.UploadStatus;
+import com.tontisa.commons.cloudstore.qiniu.QiniuCloudStorerUtil;
 
 /**
  * 图片抓取器
  * @author hancong03@baidu.com
+ * @author renlei
  *
  */
 public class ImageHunter {
@@ -64,6 +69,8 @@ public class ImageHunter {
 		HttpURLConnection connection = null;
 		URL url = null;
 		String suffix = null;
+		byte[] data = null;
+		InputStream is = null;
 		
 		try {
 			url = new URL( urlStr );
@@ -71,9 +78,7 @@ public class ImageHunter {
 			if ( !validHost( url.getHost() ) ) {
 				return new BaseState( false, AppInfo.PREVENT_HOST );
 			}
-			
 			connection = (HttpURLConnection) url.openConnection();
-		
 			connection.setInstanceFollowRedirects( true );
 			connection.setUseCaches( true );
 		
@@ -82,7 +87,6 @@ public class ImageHunter {
 			}
 			
 			suffix = MIMEType.getSuffix( connection.getContentType() );
-			
 			if ( !validFileType( suffix ) ) {
 				return new BaseState( false, AppInfo.NOT_ALLOW_FILE_TYPE );
 			}
@@ -91,13 +95,49 @@ public class ImageHunter {
 				return new BaseState( false, AppInfo.MAX_SIZE );
 			}
 			
-			String savePath = this.getPath( this.savePath, this.filename, suffix );
-			String physicalPath = this.rootPath + savePath;
+			//*******
+			long maxSize = ((Long) conf.get("maxSize")).longValue();
 
-			State state = StorageManager.saveFileByInputStream( connection.getInputStream(), physicalPath );
+			//maolujun
+			String savePath = PathFormat.parse((String) conf.get("savePath"),
+					(String) conf.get("filename"), conf);
 			
+			savePath = savePath + suffix;
+			/*String physicalPath = (String) conf.get("rootPath") + savePath;
+
+			State storageState = StorageManager.saveBinaryFile(data, physicalPath);*/
+
+			//七牛存储
+			String bucket = Strings.defaultString((String) conf.get("image.bucket"));
+			QiniuCloudStorerUtil qiniuCloudStoreUtil = QiniuCloudStorerUtil.getInstance(conf);
+			is = connection.getInputStream();
+			ByteArrayOutputStream output = new ByteArrayOutputStream();
+		    byte[] buffer = new byte[4096];
+		    int n = 0;
+		    while (-1 != (n = is.read(buffer))) {
+		        output.write(buffer, 0, n);
+		    }
+			data = output.toByteArray();
+			UploadStatus uploadStatus = qiniuCloudStoreUtil.upload(bucket, savePath, data);
+			buffer = null;
+			
+			if (UploadStatus.FAIL == uploadStatus) {
+				return new BaseState(false, AppInfo.NOT_ALLOW_FILE_TYPE);
+			}
+			//*********
+			
+			
+			//String savePath = this.getPath( this.savePath, this.filename, suffix );
+			//String physicalPath = this.rootPath + savePath;
+
+			//State state = StorageManager.saveFileByInputStream( connection.getInputStream(), physicalPath );
+			State state = new BaseState(true);
 			if ( state.isSuccess() ) {
-				state.putInfo( "url", PathFormat.format( savePath ) );
+				//返回七牛完整路径--此种方式可以兼容以前直接上传在本地的图片访问方式，唯一的缺点就是七牛空间域名固定，不可修改
+				//storageState.putInfo("url", bucketObj.getFileUrl(saveFileName));
+				//处理文件名特殊字符~!@#$%^&(){}[]【】';,.-=+_。，；：“‘、空格-->~%21@%23$%25%5E&%28){}%5B]';,.-=+_。，；：“‘、_1468218495036.jpg
+				String fullUrl = qiniuCloudStoreUtil.getFileURL(bucket, savePath).replace("%", "%25").replace(" ", "%20").replace("^", "%5E").replace("!", "%21").replace("#", "%23");
+				state.putInfo( "url", fullUrl);
 				state.putInfo( "source", urlStr );
 			}
 			
@@ -105,6 +145,14 @@ public class ImageHunter {
 			
 		} catch ( Exception e ) {
 			return new BaseState( false, AppInfo.REMOTE_FAIL );
+		} finally {
+			if (is != null) {
+				try {
+					is.close();
+					is = null;
+				} catch (Exception e2) {
+				}
+			}
 		}
 		
 	}

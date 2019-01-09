@@ -1,0 +1,35 @@
+1、ueditor.all.min.js
+utils.each(domUtils.getElementsByTagName(node,'li'),function(li){
+                //li.style.cssText && (li.style.cssText = '');
+                
+2、ueditor.all.js
+a.style.cssText
+
+refer to :
+1、https://www.cnblogs.com/xiangsj/p/6026533.html
+2、https://www.jb51.net/article/109898.htm
+
+百度的Ueditor编辑器出于安全性考虑，用户在html模式下粘贴进去的html文档会自动被去除样式和转义。虽然安全的，但是非常不方便。做一下修改把这个功能去掉,需要的朋友可以参考下
+一、打开ueditor.all.js
+二、大概9300行找到 ///plugin 编辑器默认的过滤转换机制，把下面的
+
+'allowDivTransToP':true 
+值改成false。为true的时候会自动把div转成p。
+三、大概9429行，有个case 'li'，这个是把li里面的样式去掉，把这个case注释掉。
+四、大概14058行，下面的第一个utils.each功能注释掉，这个是自动给li里面的内容增加一个p。
+五、大概14220行，
+
+node.className = utils.trim(node.className.replace(/list-paddingleft-\w+/,'')) + ' list-paddingleft-' + type; 
+注释掉，这个是自动给ul增加一个内置的样式。
+下面的14222行
+
+li.style.cssText && (li.style.cssText = ''); 
+注释掉，这个是自动去除粘贴进去的代码的li的style样式
+六、大概9327行和9471行附近的
+
+else if (node.tagName == 'span' && (!node.attrs || utils.isEmptyObject(node.attrs))) {             
+            node.parentNode.removeChild(node, true) 
+          } 
+去掉，这是代码中如果有类似<span>文字</span>这样的不包含样式的<span>元素将会被删掉<span>只保留文字。
+至此，我们粘贴进去的html格式的ul和li就不会被转义了。
+PS:以上版本修改基于1.3.6版本。新版本位置可能有变动或者已经解决此问题。

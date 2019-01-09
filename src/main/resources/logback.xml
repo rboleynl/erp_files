@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>
+				%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n
+			</Pattern>
+		</layout>
+	</appender>
+	
+	<appender name="INFO_LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>erp_files_logs/info.log</file>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} [%class:%line] - %m%n</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>info.%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+	</appender>
+
+	<appender name="ERROR_LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>erp_files_logs/error.log</file>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} [%class:%line] - %m%n</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>error.%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+	</appender>
+	<!-- 
+	<logger name="org.springframework" level="info" additivity="false">
+		<appender-ref ref="STDOUT"/>
+	</logger>
+	 -->
+
+	<!--JdbcTemplate的日志输出器 -->
+	<!-- 
+	<logger name="org.springframework.jdbc.core" additivity="false" level="debug">
+		<appender-ref ref="STDOUT"/>
+	</logger>
+	 -->
+
+
+	<!-- 日志输出级别 -->
+	<logger name="com.baidu" level="INFO"/>
+	<!-- tontisa log -->
+	<root level="info">
+		<appender-ref ref="STDOUT"/>
+		<appender-ref ref="ERROR_LOG_FILE"/>
+		<appender-ref ref="INFO_LOG_FILE"/>
+	</root>
+</configuration>

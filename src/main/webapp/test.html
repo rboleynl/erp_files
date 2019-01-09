@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>无标题文档</title>
+</head>
+<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script type="text/javascript">
+$(function(){
+
+			$('#btn').click(function(){
+			  $(this).attr('for','text2');
+			  upLoadImg = 6;
+			});
+
+	
+});
+$('#text2').on('change',function(){
+  $('#form_upload').submit();
+  $("#upload_ifm").load(function() {
+    var resultJson = this.contentWindow.document.body.innerHTML;
+    var result = $.parseJSON(resultJson);
+    if (result && result.state == "SUCCESS") {
+      $('#text2').val(null);
+    }
+  });
+});
+</script>
+<body>
+<label id="btn">选择文件</label>
+<form action="/erp_files/ueditor/jsp/controller.jsp?action=uploadfile" enctype="multipart/form-data" id="form_upload" method="post" target="upload_ifm" >
+  <input type="file" name="upfile" id="text2" />
+</form>
+<iframe id='upload_ifm' name='upload_ifm' style="display:none"/>
+
+
+
+
+
+</body>
+</html>

@@ -12,6 +12,8 @@ import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.baidu.ueditor.define.ActionMap;
 
@@ -21,6 +23,7 @@ import com.baidu.ueditor.define.ActionMap;
  *
  */
 public final class ConfigManager {
+	private static final Logger LOG = LoggerFactory.getLogger(ConfigManager.class);
 
 	private final String rootPath;
 	private final String originalPath;
@@ -169,7 +172,8 @@ public final class ConfigManager {
 	private void initEnv () throws FileNotFoundException, IOException {
 		
 		File file = new File( this.originalPath );
-		
+		LOG.info("just testddd!");
+		LOG.debug("just test dubug!");
 		if ( !file.isAbsolute() ) {
 			file = new File( file.getAbsolutePath() );
 		}
@@ -180,6 +184,8 @@ public final class ConfigManager {
 		
 		try{
 			JSONObject jsonConfig = new JSONObject( configContent );
+			LOG.debug("debug-jsonConfgi->" + jsonConfig.toString());
+			LOG.debug("info-jsonConfgi->" + jsonConfig.toString());
 			this.jsonConfig = jsonConfig;
 		} catch ( Exception e ) {
 			this.jsonConfig = null;

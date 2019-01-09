@@ -8056,8 +8056,10 @@ UE.Editor.defaultOptions = function(editor){
 
     UE.Editor.prototype.loadServerConfig = function(){
         var me = this;
+        console && console.log("准备执行..." + new Date());
         setTimeout(function(){
             try{
+            	console && console.log("开始执行..." + new Date());
                 me.options.imageUrl && me.setOpt('serverUrl', me.options.imageUrl.replace(/^(.*[\/]).+([\.].+)$/, '$1controller$2'));
 
                 var configUrl = me.getActionUrl('config'),
@@ -8076,10 +8078,12 @@ UE.Editor.defaultOptions = function(editor){
                             me.fireEvent('serverConfigLoaded');
                             me._serverConfigLoaded = true;
                         } catch (e) {
+                        	console && console.log(e);
                             showErrorMsg(me.getLang('loadconfigFormatError'));
                         }
                     },
-                    'onerror':function(){
+                    'onerror':function(r){
+                    	console && console.log(r);
                         showErrorMsg(me.getLang('loadconfigHttpError'));
                     }
                 });
@@ -8200,10 +8204,75 @@ UE.ajax = function() {
         if (!utils.isEmptyObject(ajaxOpts.data)){
             submitStr += (submitStr? "&":"") + json2str(ajaxOpts.data);
         }
+        console && console.log("发送ajax请求开始->" + new Date());
         //超时检测
         var timerID = setTimeout(function() {
             if (xhr.readyState != 4) {
                 timeIsOut = true;
+                console && console.log("请求超时...");
+                console && console.log("发送ajax请求超时->" + new Date());
+                xhr.abort();
+                clearTimeout(timerID);
+                //请求重试一次
+                doAjaxAgain(url, ajaxOptions);
+            }
+        }, ajaxOpts.timeout);
+
+        var method = ajaxOpts.method.toUpperCase();
+        var str = url + (url.indexOf("?")==-1?"?":"&") + (method=="POST"?"":submitStr+ "&noCache=" + +new Date);
+        xhr.open(method, str, ajaxOpts.async);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                if (!timeIsOut && xhr.status == 200) {
+                    ajaxOpts.onsuccess(xhr);
+                } else {
+                    //ajaxOpts.onerror(xhr);
+                }
+            }
+        };
+        if (method == "POST") {
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send(submitStr);
+        } else {
+            xhr.send(null);
+        }
+    }
+    
+    function doAjaxAgain(url, ajaxOptions) {
+        var xhr = creatAjaxRequest(),
+        //是否超时
+            timeIsOut = false,
+        //默认参数
+            defaultAjaxOptions = {
+                method:"POST",
+                timeout:5000,
+                async:true,
+                data:{},//需要传递对象的话只能覆盖
+                onsuccess:function() {
+                },
+                onerror:function() {
+                }
+            };
+
+        if (typeof url === "object") {
+            ajaxOptions = url;
+            url = ajaxOptions.url;
+        }
+        if (!xhr || !url) return;
+        var ajaxOpts = ajaxOptions ? utils.extend(defaultAjaxOptions,ajaxOptions) : defaultAjaxOptions;
+
+        var submitStr = json2str(ajaxOpts);  // { name:"Jim",city:"Beijing" } --> "name=Jim&city=Beijing"
+        //如果用户直接通过data参数传递json对象过来，则也要将此json对象转化为字符串
+        if (!utils.isEmptyObject(ajaxOpts.data)){
+            submitStr += (submitStr? "&":"") + json2str(ajaxOpts.data);
+        }
+        console && console.log("重试-发送ajax请求开始->" + new Date());
+        //超时检测
+        var timerID = setTimeout(function() {
+            if (xhr.readyState != 4) {
+                timeIsOut = true;
+                console && console.log("重试-请求超时...");
+                console && console.log("重试-发送ajax请求超时->" + new Date());
                 xhr.abort();
                 clearTimeout(timerID);
             }
@@ -15266,7 +15335,7 @@ UE.plugins['list'] = function () {
             style && (node.style.cssText = 'list-style-type:' + style);
             node.className = utils.trim(node.className.replace(/list-paddingleft-\w+/,'')) + ' list-paddingleft-' + type;
             utils.each(domUtils.getElementsByTagName(node,'li'),function(li){
-                li.style.cssText && (li.style.cssText = '');
+                //li.style.cssText && (li.style.cssText = '');
                 if(!li.firstChild){
                     domUtils.remove(li);
                     return;

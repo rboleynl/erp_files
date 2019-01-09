@@ -4,10 +4,10 @@
 	/* qiniu 配置 */
 	"qiniu.accessKey" : "NZrTFjztBSRINUzLMYGRGtuxYBzbE8MeLTXoRgyy",
 	"qiniu.secretKey" : "X9r5o7XThUKiXnlmstGIOAGiK-PiD5E5HRmHeJ__",
-	"qiniu.bucket.mappings" : "{'tontisa-xqerp':{'dn':'http://cdnfile.op110.com.cn','isPrivate':'false'},'tontisa-file':{'dn':'http://o6yn0zkni.bkt.clouddn.com','isPrivate':'false'},'tontisa-test-xqerp':{'dn':'http://7xv25h.com2.z0.glb.qiniucdn.com','isPrivate':'false'}}",
+	"qiniu.bucket.mappings" : "{'tontisa-xqerp':{'dn':'http://cdnfile.op110.com.cn','isPrivate':'false'},'tontisa-file':{'dn':'http://o6yn0zkni.bkt.clouddn.com','isPrivate':'false'},'tontisa-test-xqerp':{'dn':'http://tcdn.op110.com.cn','isPrivate':'false'}}",
 	"qiniu.fsizeLimit" : "15728640",/*限制15M*/
-	/*"image.bucket" : "tontisa-test-xqerp",*/
-	"image.bucket" : "tontisa-xqerp",
+	"image.bucket" : "tontisa-test-xqerp",
+	/*"image.bucket" : "tontisa-xqerp",*/
 	/* 设置代理 */
 	"http.proxy.host" : "",
 	"http.proxy.port" : ""

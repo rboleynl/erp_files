@@ -13,7 +13,7 @@
 <script type="text/javascript" charset="utf-8"
 	src="ueditor/ueditor.config.js"></script>
 <script type="text/javascript" charset="utf-8"
-	src="ueditor/ueditor.all.js">
+	src="ueditor/ueditor.all.min.js">
 	
 </script>
 <script type="text/javascript" charset="utf-8"
@@ -34,7 +34,6 @@
 	<br>
 	<script id="editor" type="text/plain"
 		style="width:1024px;height:500px;"></script>
-	<img src="E:/work/server/apache-tomcat-8.0.26/webapps/erp_files/ueditor/jsp/upload/image/20151014/1444811826750011563.jpg" alt="1444811826750011563.jpg"/>
 </body>
 <script type="text/javascript">
 	var ue = UE.getEditor('editor');
